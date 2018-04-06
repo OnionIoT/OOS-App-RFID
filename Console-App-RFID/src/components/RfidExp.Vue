@@ -1,10 +1,24 @@
 <template>
   <div class="container">
     <div class="columns">
-      <div class="column col-6 col-xs-12">
+      <div class="column topbar">
+        <div class="navbar">
+          <section class="navbar-section">
+            <a href="#" class="navbar-brand mr-2">RFID Reader</a>
+          </section>
+          <section class="navbar-section">
+            <button class="btn btn-primary btn-sm mr-2" v-on:click="toggleScan">{{buttonMsg}}</button>
+            <button class="btn btn-primary btn-sm" v-on:click="clearList">Clear List</button>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column col-6 col-xs-12 col-s-12">
         <img src="~@/assets/rfid-nfc-expansion.png" class="img-responsive">
       </div>
-      <div class="column col-6 col-xs-12">
+      <div class="column col-6 col-xs-12 col-s-12">
         <table class="table table-striped">
           <thead>
             <tr>
@@ -13,13 +27,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in cards" :key="item.uid">
+            <tr v-for="item in cards" :key="item.time">
               <td>{{item.uid}}</td>
               <td>{{item.time}}</td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+    <div>
+      <button class="btn btn-primary" v-on:click="addCard">Add Card</button>
     </div>
   </div>
 </template>
@@ -29,17 +46,38 @@ export default {
   name: 'RfidExp',
   data () {
     return {
-      cards: [
-        {
-          uid: '123456789',
-          time: 'Apr 5, 2018'
-        },
-        {
-          uid: 'qwertyuiop',
-          time: 'Apr 7, 2018'
-        }
-      ]
+      bScanEnabled: false,
+      cards: []
+    }
+  },
+  methods: {
+    addCard: function (uid) {
+      var now = new Date()
+      var timeStamp = now.toUTCString()
+      this.cards.unshift({
+        uid: 'abcdefgh',
+        time: timeStamp
+      })
+    },
+    clearList: function () {
+      this.cards = []
+    },
+    toggleScan: function () {
+      this.bScanEnabled = !this.bScanEnabled
+    }
+  },
+  computed: {
+    buttonMsg: function () {
+      return (this.bScanEnabled ? 'Stop Scanning' : 'Start Scanning')
     }
   }
 }
 </script>
+
+<style>
+.topbar {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  background-color: #F5D76E;
+}
+</style>
