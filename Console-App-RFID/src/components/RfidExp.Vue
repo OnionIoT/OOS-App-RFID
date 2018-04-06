@@ -4,7 +4,7 @@
       <div class="column topbar">
         <div class="navbar">
           <section class="navbar-section">
-            <a href="#" class="navbar-brand mr-2">RFID Reader</a>
+            <div class="navbar-brand mr-2">RFID Reader</div>
           </section>
           <section class="navbar-section">
             <button class="btn btn-primary btn-sm mr-2" v-on:click="toggleScan">{{buttonMsg}}</button>
@@ -16,7 +16,7 @@
 
     <div class="columns">
       <div class="column col-6 col-xs-12 col-s-12">
-        <img src="~@/assets/rfid-nfc-expansion.png" class="img-responsive">
+        <img src="~@/assets/rfid-nfc-expansion.png" class="centered img-responsive">
       </div>
       <div class="column col-6 col-xs-12 col-s-12">
         <table class="table table-striped">
@@ -64,6 +64,13 @@ export default {
     },
     toggleScan: function () {
       this.bScanEnabled = !this.bScanEnabled
+      if (this.bScanEnabled) {
+        // send command to START scan process
+        // TODO
+      } else {
+        // send command to STOP scan process
+        // TODO
+      }
     }
   },
   computed: {
