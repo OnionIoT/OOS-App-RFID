@@ -27,7 +27,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in cards" :key="item.time">
+            <tr v-for="item in cards" :key="item.uid">
               <td>{{item.uid}}</td>
               <td>{{item.time}}</td>
             </tr>
@@ -42,8 +42,12 @@
 </template>
 
 <script>
+import OnionCDK from '@/OnionCDK.js'
 export default {
   name: 'RfidExp',
+  components: {
+    OnionCDK
+  },
   data () {
     return {
       bScanEnabled: false,
@@ -55,9 +59,12 @@ export default {
       var now = new Date()
       var timeStamp = now.toUTCString()
       this.cards.unshift({
-        uid: 'abcdefgh',
+        uid: OnionCDK.makeId(),
         time: timeStamp
       })
+
+      // OnionCDK.init()
+      OnionCDK.subscribe('/test', console.log)
     },
     clearList: function () {
       this.cards = []
@@ -77,6 +84,10 @@ export default {
     buttonMsg: function () {
       return (this.bScanEnabled ? 'Stop Scanning' : 'Start Scanning')
     }
+  },
+  created: function () {
+    OnionCDK.init()
+    OnionCDK.subscribe('/test', console.log)
   }
 }
 </script>
