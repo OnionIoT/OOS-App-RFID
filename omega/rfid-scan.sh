@@ -43,7 +43,6 @@ checkTags () {
 		then
 			accepted=$(grep -i $tag $ACCEPTED_FILE)
 			denied=$(grep -i $tag $DENIED_FILE)
-			echo "basedir: $BASEDIR"
 
 			if [ "$accepted" != "" ]; then
 				status="accepted"
@@ -64,6 +63,7 @@ checkTags () {
 		#echo "$status: $tag"
 		# on mqtt
 		msg="{\"status\":\"$status\", \"tag\":\"$tag\"}"
+		# echo "$msg"
 		mosquitto_pub -t "/rfid" -m "$msg"
 
 		# increment the line number
