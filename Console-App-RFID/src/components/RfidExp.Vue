@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    {{appUid}}
     <div class="columns">
       <div class="column topbar">
         <div class="navbar">
@@ -51,7 +52,9 @@ export default {
   data () {
     return {
       bScanEnabled: false,
-      cards: []
+      cards: [],
+      service: 'rfid-scan',
+      appUid: ''
     }
   },
   methods: {
@@ -73,10 +76,10 @@ export default {
       this.bScanEnabled = !this.bScanEnabled
       if (this.bScanEnabled) {
         // send command to START scan process
-        // TODO
+        OnionCDK.service(this.service, 'start')
       } else {
         // send command to STOP scan process
-        // TODO
+        OnionCDK.service(this.service, 'stop')
       }
     }
   },
@@ -86,7 +89,8 @@ export default {
     }
   },
   created: function () {
-    OnionCDK.init()
+    window.testVar = '123456789'
+    OnionCDK.init(console.log)
     OnionCDK.subscribe('/test', console.log)
   }
 }
