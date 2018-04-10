@@ -1,4 +1,4 @@
 all: info
 
 info:
-  @echo "Onion OS App"
+	@echo "Onion OS App"
