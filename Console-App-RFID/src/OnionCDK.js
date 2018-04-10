@@ -10,7 +10,7 @@ export default {
   init: function () {
     window.addEventListener('message', this.processMessage.bind(this), false)
   },
-  subscribe: function (topic, callback) {
+  subscribe: function (topic) {
     this.sendEvent('Onion.CDK.Subscribe', {topic: topic})
   },
   publish: function (topic, content) {
@@ -61,10 +61,10 @@ export default {
         e.data.content.name,
         e.data.content.command,
         e.data.content.result)
-    // } else if (e.data.event === 'Onion.CDK.Message') {
-    //   this.handlers.Service (
-    //     e.data.content.topic,
-    //     e.data.content.content )
+    } else if (e.data.event === 'Onion.CDK.Message') {
+      this.onMessage(
+        e.data.content.topic,
+        e.data.content.content)
     // } else if (e.data.event === 'Onion.CDK.Cmd') {
     //   this.handlers.Cmd (
     //     e.data.content.cmd,

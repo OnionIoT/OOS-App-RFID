@@ -1,6 +1,8 @@
 <template>
   <div class="container">
-    {{appUid}}
+    <div class="modal" :class="modalActive" id="modal-id" style="background-color: white; opacity: 0.5">
+      <div class="loading loading-lg"></div>
+    </div>
     <div class="columns">
       <div class="column topbar">
         <div class="navbar">
@@ -28,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in cards" :key="item.uid">
+            <tr v-for="item in cards" :key="item.uid+item.time">
               <td>{{item.uid}}</td>
               <td>{{item.time}}</td>
             </tr>
@@ -37,7 +39,8 @@
       </div>
     </div>
     <div>
-      <button class="btn btn-primary" v-on:click="addCard">Add Card</button>
+      <!--<button class="btn btn-primary" v-on:click="addCard">Add Card</button>-->
+      <h5>{{instructions}}</h5>
     </div>
   </div>
 </template>
@@ -51,9 +54,13 @@ export default {
   },
   data () {
     return {
+      bReady: false,
       bScanEnabled: false,
       cards: [],
+      lastUid: '',
+      lastAccess: new Date(),
       service: 'rfid-scan',
+      topic: '/console/rfid',
       appUid: ''
     }
   },
@@ -61,13 +68,14 @@ export default {
     addCard: function (uid) {
       var now = new Date()
       var timeStamp = now.toUTCString()
-      this.cards.unshift({
-        uid: OnionCDK.makeId(),
-        time: timeStamp
-      })
-
-      // OnionCDK.init()
-      OnionCDK.subscribe('/test', console.log)
+      if (this.lastUid !== uid || (now - this.lastAccess) > 1600) {
+        this.cards.unshift({
+          uid: uid,
+          time: timeStamp
+        })
+        this.lastUid = uid
+        this.lastAccess = now
+      }
     },
     clearList: function () {
       this.cards = []
@@ -85,37 +93,57 @@ export default {
   computed: {
     buttonMsg: function () {
       return (this.bScanEnabled ? 'Stop Scanning' : 'Start Scanning')
+    },
+    instructions: function () {
+      if (!this.bScanEnabled) {
+        return 'Hit the Start Scanning button above!'
+      } else if (this.cards.length === 0) {
+        return 'Bring an RFID tag close to your Expansion!'
+      } else {
+        return ''
+      }
+    },
+    modalActive: function () {
+      if (!this.bReady) {
+        return 'active'
+      } else {
+        return ''
+      }
     }
   },
   created: function () {
     OnionCDK.onInit = function () {
       console.log('initialized')
       OnionCDK.service('rfid-scan', 'list')
-    }
+      OnionCDK.subscribe(this.topic)
+    }.bind(this)
 
     // Onion.CDK.onMessage;
     OnionCDK.onService = function (name, command, result) {
       console.log(name, command, result)
       if (command === 'list' && typeof result !== 'undefined') {
-        console.log('list: setting bScanEnabled to ' + result)
+        // console.log('list: setting bScanEnabled to ' + result)
         this.bScanEnabled = result
+        this.bReady = true
       } else if (command === 'start' && typeof result !== 'undefined') {
-        console.log('start: setting bScanEnabled to ' + result)
+        // console.log('start: setting bScanEnabled to ' + result)
         this.bScanEnabled = result
       } else if (command === 'stop' && typeof result !== 'undefined') {
-        console.log('stop: setting bScanEnabled to ' + result)
+        // console.log('stop: setting bScanEnabled to ' + result)
         this.bScanEnabled = !result
       }
     }.bind(this)
 
+    OnionCDK.onMessage = function (topic, content) {
+      var data = JSON.parse(content)
+      if (topic === this.topic) {
+        if (data.tag) {
+          this.addCard(data.tag)
+        }
+      }
+    }.bind(this)
+
     OnionCDK.init()
-    // OnionCDK.service('rfid-scan', 'list')
-    //   .then(result => {
-    //     console.log(result)
-    //   })
-    //   // .then(function () {
-    //   //   OnionCDK.subscribe('/test', console.log)
-    //   // })
   }
 }
 </script>

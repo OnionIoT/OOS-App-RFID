@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ## global variables
+TOPIC="/console/rfid"
 BASEDIR=$(dirname "$0")
 ACCEPTED_FILE="$BASEDIR/accepted.lst"
 DENIED_FILE="$BASEDIR/denied.lst"
@@ -64,7 +65,7 @@ checkTags () {
 		# on mqtt
 		msg="{\"status\":\"$status\", \"tag\":\"$tag\"}"
 		# echo "$msg"
-		mosquitto_pub -t "/rfid" -m "$msg"
+		mosquitto_pub -t "$TOPIC" -m "$msg"
 
 		# increment the line number
 		line=$((line + 1))
