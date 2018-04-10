@@ -89,9 +89,24 @@ export default {
     }
   },
   created: function () {
-    window.testVar = '123456789'
-    OnionCDK.init(console.log)
-    OnionCDK.subscribe('/test', console.log)
+    OnionCDK.onInit = function () {
+      console.log('initialized')
+      OnionCDK.service('rfid-scan', 'list')
+    }
+
+    // Onion.CDK.onMessage;
+    OnionCDK.onService = function (name, command, result) {
+      console.log(name, command, result)
+    }
+
+    OnionCDK.init()
+    // OnionCDK.service('rfid-scan', 'list')
+    //   .then(result => {
+    //     console.log(result)
+    //   })
+    //   // .then(function () {
+    //   //   OnionCDK.subscribe('/test', console.log)
+    //   // })
   }
 }
 </script>
