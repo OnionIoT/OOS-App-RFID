@@ -73,13 +73,12 @@ export default {
       this.cards = []
     },
     toggleScan: function () {
-      this.bScanEnabled = !this.bScanEnabled
       if (this.bScanEnabled) {
-        // send command to START scan process
-        OnionCDK.service(this.service, 'start')
-      } else {
-        // send command to STOP scan process
+        // currently enabled - send command to STOP scan process
         OnionCDK.service(this.service, 'stop')
+      } else {
+        // currently disabled - send command to START scan process
+        OnionCDK.service(this.service, 'start')
       }
     }
   },
@@ -97,7 +96,17 @@ export default {
     // Onion.CDK.onMessage;
     OnionCDK.onService = function (name, command, result) {
       console.log(name, command, result)
-    }
+      if (command === 'list' && typeof result !== 'undefined') {
+        console.log('list: setting bScanEnabled to ' + result)
+        this.bScanEnabled = result
+      } else if (command === 'start' && typeof result !== 'undefined') {
+        console.log('start: setting bScanEnabled to ' + result)
+        this.bScanEnabled = result
+      } else if (command === 'stop' && typeof result !== 'undefined') {
+        console.log('stop: setting bScanEnabled to ' + result)
+        this.bScanEnabled = !result
+      }
+    }.bind(this)
 
     OnionCDK.init()
     // OnionCDK.service('rfid-scan', 'list')

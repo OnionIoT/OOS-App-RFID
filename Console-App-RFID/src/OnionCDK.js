@@ -11,13 +11,13 @@ export default {
     window.addEventListener('message', this.processMessage.bind(this), false)
   },
   subscribe: function (topic, callback) {
-    this.sendEvent('Onion.CDK.subscribe', {topic: topic})
+    this.sendEvent('Onion.CDK.Subscribe', {topic: topic})
   },
   publish: function (topic, content) {
 
   },
   service: function (name, command, callback) {
-    this.sendEvent('Onion.CDK.service', {
+    this.sendEvent('Onion.CDK.Service', {
       service: name,
       command: command
     })
